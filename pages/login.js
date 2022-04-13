@@ -9,13 +9,14 @@ import {
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { Store } from '../utils/Store';
 import useStyles from '../utils/styles';
 import Cookies from 'js-cookie';
 import { Controller, useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
+import { getError } from '../utils/error';
 
 export default function Login() {
   const {
@@ -46,10 +47,7 @@ export default function Login() {
       Cookies.set('userInfo', data);
       router.push(redirect || '/');
     } catch (err) {
-      enqueueSnackbar(
-        err.response.data ? err.response.data.message : err.message,
-        { variant: 'error' }
-      );
+      enqueueSnackbar(getError(err), { variant: 'error' });
     }
   };
   return (

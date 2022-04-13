@@ -3,7 +3,7 @@ import {
   Container,
   Toolbar,
   Typography,
-  createTheme,
+  createMuiTheme,
   ThemeProvider,
   CssBaseline,
   Switch,
@@ -26,7 +26,7 @@ export default function Layout({ title, description, children }) {
   const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const { darkMode, cart, userInfo } = state;
-  const theme = createTheme({
+  const theme = createMuiTheme({
     typography: {
       h1: {
         fontSize: '1.6rem',
@@ -59,8 +59,11 @@ export default function Layout({ title, description, children }) {
   const loginClickHandler = (e) => {
     setAnchorEl(e.currentTarget);
   };
-  const loginMenuCloseHandler = () => {
+  const loginMenuCloseHandler = (e, redirect) => {
     setAnchorEl(null);
+    if (redirect) {
+      router.push(redirect);
+    }
   };
   const logoutClickHandler = () => {
     setAnchorEl(null);
@@ -125,10 +128,27 @@ export default function Layout({ title, description, children }) {
                     open={Boolean(anchorEl)}
                     onClose={loginMenuCloseHandler}
                   >
-                    <MenuItem onClick={loginMenuCloseHandler}>Profiil</MenuItem>
-                    <MenuItem onClick={loginMenuCloseHandler}>
-                      Minu kasutaja
+                    <MenuItem
+                      onClick={(e) => loginMenuCloseHandler(e, '/profile')}
+                    >
+                      Profiil
                     </MenuItem>
+                    <MenuItem
+                      onClick={(e) =>
+                        loginMenuCloseHandler(e, '/order-history')
+                      }
+                    >
+                      Tellimuste ajalugu
+                    </MenuItem>
+                    {userInfo.isAdmin && (
+                      <MenuItem
+                        onClick={(e) =>
+                          loginMenuCloseHandler(e, '/admin/dashboard')
+                        }
+                      >
+                        Administraatori laud
+                      </MenuItem>
+                    )}
                     <MenuItem onClick={logoutClickHandler}>Logi välja</MenuItem>
                   </Menu>
                 </>
