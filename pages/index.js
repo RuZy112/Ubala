@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import NextLink from 'next/link';
-import { Grid, Link, Typography } from '@material-ui/core';
+import { Grid, Link, Typography } from '@mui/material';
 import Layout from '../components/Layout';
 import db from '../utils/db';
 import Product from '../models/Product';
@@ -8,12 +9,12 @@ import { useRouter } from 'next/router';
 import { useContext } from 'react';
 import { Store } from '../utils/Store';
 import ProductItem from '../components/ProductItem';
-import Carousel from 'react-material-ui-carousel';
-import useStyles from '../utils/styles';
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import classes from '../utils/classes';
 import Image from 'next/image';
 
 export default function Home(props) {
-  const classes = useStyles();
   const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const { topRatedProducts, featuredProducts } = props;
@@ -26,30 +27,27 @@ export default function Home(props) {
       return;
     }
     dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity } });
-    router.push('/cart');
+    //router.push('/cart');
   };
 
   return (
     <Layout>
-      <Carousel className={classes.mt1} animation="slide">
+      {/*
+      <Carousel>
         {featuredProducts.map((product) => (
           <NextLink
             key={product._id}
             href={`/product/${product.slug}`}
             passHref
           >
-            <Link>
-              <Image
-                src={product.featuredImage}
-                alt={product.name}
-                width={1500}
-                height={400}
-                className={classes.featuredImage}
-              ></Image>
+            <Link sx={classes.flex}>
+              <img src={product.featuredImage} alt={product.name}></img>
             </Link>
           </NextLink>
         ))}
       </Carousel>
+      */}
+
       <Typography variant="h2">Populaarsed Tooted</Typography>
       <Grid container spacing={3}>
         {topRatedProducts.map((product) => (
@@ -78,7 +76,7 @@ export async function getServerSideProps() {
     .sort({
       rating: -1,
     })
-    .limit(6);
+    .limit(18); // remove limit to show every product
   await db.disconnect();
   return {
     props: {

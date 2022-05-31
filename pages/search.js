@@ -7,19 +7,19 @@ import {
   MenuItem,
   Select,
   Typography,
-} from '@material-ui/core';
-import CancelIcon from '@material-ui/icons/Cancel';
+} from '@mui/material';
+import CancelIcon from '@mui/icons-material/Cancel';
 import { useRouter } from 'next/router';
 import React, { useContext } from 'react';
 import Layout from '../components/Layout';
 import db from '../utils/db';
 import Product from '../models/Product';
-import useStyles from '../utils/styles';
+import classes from '../utils/classes';
 import ProductItem from '../components/ProductItem';
 import { Store } from '../utils/Store';
 import axios from 'axios';
-import Rating from '@material-ui/lab/Rating';
-import { Pagination } from '@material-ui/lab';
+import Rating from '@mui/material/Rating';
+import { Pagination } from '@mui/material';
 
 const PAGE_SIZE = 3;
 
@@ -41,7 +41,6 @@ const prices = [
 const ratings = [1, 2, 3, 4, 5];
 
 export default function Search(props) {
-  const classes = useStyles();
   const router = useRouter();
   const {
     query = 'all',
@@ -113,12 +112,12 @@ export default function Search(props) {
     router.push('/cart');
   };
   return (
-    <Layout title="Search">
-      <Grid className={classes.mt1} container spacing={1}>
+    <Layout title="search">
+      <Grid sx={classes.section} container spacing={1}>
         <Grid item md={3}>
           <List>
             <ListItem>
-              <Box className={classes.fullWidth}>
+              <Box sx={classes.fullWidth}>
                 <Typography>Kategooriad</Typography>
                 <Select fullWidth value={category} onChange={categoryHandler}>
                   <MenuItem value="all">Kõik</MenuItem>
@@ -132,7 +131,7 @@ export default function Search(props) {
               </Box>
             </ListItem>
             <ListItem>
-              <Box className={classes.fullWidth}>
+              <Box sx={classes.fullWidth}>
                 <Typography>Brändid</Typography>
                 <Select value={brand} onChange={brandHandler} fullWidth>
                   <MenuItem value="all">Kõik</MenuItem>
@@ -146,7 +145,7 @@ export default function Search(props) {
               </Box>
             </ListItem>
             <ListItem>
-              <Box className={classes.fullWidth}>
+              <Box sx={classes.fullWidth}>
                 <Typography>Hind</Typography>
                 <Select value={price} onChange={priceHandler} fullWidth>
                   <MenuItem value="all">Kõik</MenuItem>
@@ -159,7 +158,7 @@ export default function Search(props) {
               </Box>
             </ListItem>
             <ListItem>
-              <Box className={classes.fullWidth}>
+              <Box sx={classes.fullWidth}>
                 <Typography>Hinnangud</Typography>
                 <Select value={rating} onChange={ratingHandler} fullWidth>
                   <MenuItem value="all">Kõik</MenuItem>
@@ -194,7 +193,7 @@ export default function Search(props) {
               ) : null}
             </Grid>
             <Grid item>
-              <Typography component="span" className={classes.sort}>
+              <Typography component="span" sx={classes.sort}>
                 Sorteeri
               </Typography>
               <Select value={sort} onChange={sortHandler}>
@@ -206,7 +205,7 @@ export default function Search(props) {
               </Select>
             </Grid>
           </Grid>
-          <Grid className={classes.mt1} container spacing={3}>
+          <Grid sx={classes.section} container spacing={3}>
             {products.map((product) => (
               <Grid item md={4} key={product.name}>
                 <ProductItem
@@ -217,7 +216,7 @@ export default function Search(props) {
             ))}
           </Grid>
           <Pagination
-            className={classes.mt1}
+            sx={classes.section}
             defaultPage={parseInt(query.page || '1')}
             count={pages}
             onChange={pageHandler}

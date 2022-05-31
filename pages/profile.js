@@ -12,11 +12,12 @@ import {
   Button,
   ListItemText,
   TextField,
-} from '@material-ui/core';
+} from '@mui/material';
 import { getError } from '../utils/error';
+import Form from '../components/Form';
 import { Store } from '../utils/Store';
 import Layout from '../components/Layout';
-import useStyles from '../utils/styles';
+import classes from '../utils/classes';
 import { Controller, useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
 import Cookies from 'js-cookie';
@@ -31,7 +32,7 @@ function Profile() {
   } = useForm();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const router = useRouter();
-  const classes = useStyles();
+
   const { userInfo } = state;
 
   useEffect(() => {
@@ -71,7 +72,7 @@ function Profile() {
     <Layout title="Profile">
       <Grid container spacing={1}>
         <Grid item md={3} xs={12}>
-          <Card className={classes.section}>
+          <Card sx={classes.section}>
             <List>
               <NextLink href="/profile" passHref>
                 <ListItem selected button component="a">
@@ -87,7 +88,7 @@ function Profile() {
           </Card>
         </Grid>
         <Grid item md={9} xs={12}>
-          <Card className={classes.section}>
+          <Card sx={classes.section}>
             <List>
               <ListItem>
                 <Typography component="h1" variant="h1">
@@ -95,10 +96,7 @@ function Profile() {
                 </Typography>
               </ListItem>
               <ListItem>
-                <form
-                  onSubmit={handleSubmit(submitHandler)}
-                  className={classes.form}
-                >
+                <Form onSubmit={handleSubmit(submitHandler)}>
                   <List>
                     <ListItem>
                       <Controller
@@ -227,7 +225,7 @@ function Profile() {
                       </Button>
                     </ListItem>
                   </List>
-                </form>
+                </Form>
               </ListItem>
             </List>
           </Card>

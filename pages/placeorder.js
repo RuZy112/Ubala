@@ -19,17 +19,16 @@ import {
   Card,
   List,
   ListItem,
-} from '@material-ui/core';
+} from '@mui/material';
+import classes from '../utils/classes';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import useStyles from '../utils/styles';
 import CheckoutWizard from '../components/CheckoutWizard';
 import { useSnackbar } from 'notistack';
 import { getError } from '../utils/error';
 import Cookies from 'js-cookie';
 
 function PlaceOrder() {
-  const classes = useStyles();
   const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const {
@@ -95,7 +94,7 @@ function PlaceOrder() {
 
       <Grid container spacing={1}>
         <Grid item md={9} xs={12}>
-          <Card className={classes.section}>
+          <Card sx={classes.section}>
             <List>
               <ListItem>
                 <Typography component="h2" variant="h2">
@@ -109,7 +108,7 @@ function PlaceOrder() {
               </ListItem>
             </List>
           </Card>
-          <Card className={classes.section}>
+          <Card sx={classes.section}>
             <List>
               <ListItem>
                 <Typography component="h2" variant="h2">
@@ -119,11 +118,11 @@ function PlaceOrder() {
               <ListItem>{paymentMethod}</ListItem>
             </List>
           </Card>
-          <Card className={classes.section}>
+          <Card sx={classes.section}>
             <List>
               <ListItem>
                 <Typography component="h2" variant="h2">
-                  Esemed
+                  Tooted
                 </Typography>
               </ListItem>
               <ListItem>
@@ -176,7 +175,7 @@ function PlaceOrder() {
           </Card>
         </Grid>
         <Grid item md={3} xs={12}>
-          <Card className={classes.section}>
+          <Card sx={classes.section}>
             <List>
               <ListItem>
                 <Typography variant="h2">Tellimuse kokkuvõte</Typography>
@@ -184,7 +183,7 @@ function PlaceOrder() {
               <ListItem>
                 <Grid container>
                   <Grid item xs={6}>
-                    <Typography>Esemed:</Typography>
+                    <Typography>Tooted:</Typography>
                   </Grid>
                   <Grid item xs={6}>
                     <Typography align="right">

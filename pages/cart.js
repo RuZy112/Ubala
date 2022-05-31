@@ -20,7 +20,8 @@ import {
   Card,
   List,
   ListItem,
-} from '@material-ui/core';
+  Box,
+} from '@mui/material';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 
@@ -51,12 +52,12 @@ function CartScreen() {
         Ostukorv
       </Typography>
       {cartItems.length === 0 ? (
-        <div>
+        <Box>
           Ostukorv on tühi.{' '}
           <NextLink href="/" passHref>
             <Link>Mine poodi</Link>
           </NextLink>
-        </div>
+        </Box>
       ) : (
         <Grid container spacing={1}>
           <Grid item md={9} xs={12}>
@@ -114,7 +115,7 @@ function CartScreen() {
                       <TableCell align="right">
                         <Button
                           variant="contained"
-                          color="secondary"
+                          color="error"
                           onClick={() => removeItemHandler(item)}
                         >
                           x

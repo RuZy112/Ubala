@@ -1,11 +1,26 @@
+import Head from 'next/head';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+
+import { createTheme } from '@mui/material/styles';
+
+import useMediaQuery from '@mui/material/useMediaQuery';
+import React, { useContext, useEffect, useState } from 'react';
+import MenuIcon from '@mui/icons-material/Menu';
+import CancelIcon from '@mui/icons-material/Cancel';
+import SearchIcon from '@mui/icons-material/Search';
+import classes from '../utils/classes';
+import { getError } from '../utils/error';
+import Cookies from 'js-cookie';
+import { useSnackbar } from 'notistack';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import NextLink from 'next/link';
 import {
   AppBar,
-  Container,
   Toolbar,
   Typography,
-  createMuiTheme,
-  ThemeProvider,
-  CssBaseline,
+  Container,
+  Link,
   Switch,
   Badge,
   Button,
@@ -19,29 +34,23 @@ import {
   Divider,
   ListItemText,
   InputBase,
-} from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
-import CancelIcon from '@material-ui/icons/Cancel';
-import SearchIcon from '@material-ui/icons/Search';
-import { Link } from '@mui/material';
-import Head from 'next/head';
-import NextLink from 'next/link';
-import React, { useContext } from 'react';
-import useStyles from '../utils/styles';
+} from '@mui/material';
+
 import { Store } from '../utils/Store';
-import { getError } from '../utils/error';
-import Cookies from 'js-cookie';
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import { useSnackbar } from 'notistack';
-import axios from 'axios';
-import { useEffect } from 'react';
 
 export default function Layout({ title, description, children }) {
-  const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const { darkMode, cart, userInfo } = state;
-  const theme = createMuiTheme({
+
+  const theme = createTheme({
+    components: {
+      MuiLink: {
+        defaultProps: {
+          underline: 'hover',
+        },
+      },
+    },
+
     typography: {
       h1: {
         fontSize: '1.6rem',
@@ -55,7 +64,7 @@ export default function Layout({ title, description, children }) {
       },
     },
     palette: {
-      type: darkMode ? 'dark' : 'light',
+      mode: darkMode ? 'dark' : 'light',
       primary: {
         main: '#f0c000',
       },
@@ -64,7 +73,8 @@ export default function Layout({ title, description, children }) {
       },
     },
   });
-  const classes = useStyles();
+
+  const router = useRouter();
 
   const [sidbarVisible, setSidebarVisible] = useState(false);
   const sidebarOpenHandler = () => {
@@ -74,13 +84,13 @@ export default function Layout({ title, description, children }) {
     setSidebarVisible(false);
   };
 
-  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
 
-  const fetchCategories = async () => {
+  const fetchBrands = async () => {
     try {
-      const { data } = await axios.get(`/api/products/categories`);
-      setCategories(data);
+      const { data } = await axios.get(`/api/products/brands`);
+      setBrands(data);
     } catch (err) {
       enqueueSnackbar(getError(err), { variant: 'error' });
     }
@@ -96,7 +106,7 @@ export default function Layout({ title, description, children }) {
   };
 
   useEffect(() => {
-    fetchCategories();
+    fetchBrands();
   }, []);
 
   const darkModeChangeHandler = () => {
@@ -119,10 +129,14 @@ export default function Layout({ title, description, children }) {
     dispatch({ type: 'USER_LOGOUT' });
     Cookies.remove('userInfo');
     Cookies.remove('cartItems');
+    Cookies.remove('shippingAddress');
+    Cookies.remove('paymentMethod');
     router.push('/');
   };
+
+  const isDesktop = useMediaQuery('(min-width:600px)');
   return (
-    <div>
+    <>
       <Head>
         <title>
           {title ? `${title} - Ubala Röstikoda` : 'Ubala Röstikoda'}
@@ -131,22 +145,20 @@ export default function Layout({ title, description, children }) {
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <AppBar position="static" className={classes.navbar}>
-          <Toolbar className={classes.toolbar}>
+        <AppBar position="static" sx={classes.appbar}>
+          <Toolbar sx={classes.toolbar}>
             <Box display="flex" alignItems="center">
               <IconButton
                 edge="start"
                 aria-label="open drawer"
                 onClick={sidebarOpenHandler}
-                className={classes.menuButton}
+                sx={classes.menuButton}
               >
-                <MenuIcon className={classes.navbarButton} />
+                <MenuIcon sx={classes.navbarButton} />
               </IconButton>
               <NextLink href="/" passHref>
                 <Link>
-                  <Typography className={classes.brand}>
-                    Ubala Röstikoda
-                  </Typography>
+                  <Typography sx={classes.brand}>Ubala Röstikoda</Typography>
                 </Link>
               </NextLink>
             </Box>
@@ -162,7 +174,7 @@ export default function Layout({ title, description, children }) {
                     alignItems="center"
                     justifyContent="space-between"
                   >
-                    <Typography>Kategooriad</Typography>
+                    <Typography>Brändid</Typography>
                     <IconButton
                       aria-label="close"
                       onClick={sidebarCloseHandler}
@@ -172,10 +184,10 @@ export default function Layout({ title, description, children }) {
                   </Box>
                 </ListItem>
                 <Divider light />
-                {categories.map((category) => (
+                {brands.map((brand) => (
                   <NextLink
-                    key={category}
-                    href={`/search?category=${category}`}
+                    key={brand}
+                    href={`/search?brand=${brand}`}
                     passHref
                   >
                     <ListItem
@@ -183,31 +195,33 @@ export default function Layout({ title, description, children }) {
                       component="a"
                       onClick={sidebarCloseHandler}
                     >
-                      <ListItemText primary={category}></ListItemText>
+                      <ListItemText primary={brand}></ListItemText>
                     </ListItem>
                   </NextLink>
                 ))}
               </List>
             </Drawer>
 
-            <div className={classes.searchSection}>
-              <form onSubmit={submitHandler} className={classes.searchForm}>
-                <InputBase
-                  name="query"
-                  className={classes.searchInput}
-                  placeholder="Otsi tooteid"
-                  onChange={queryChangeHandler}
-                />
-                <IconButton
-                  type="submit"
-                  className={classes.iconButton}
-                  aria-label="search"
-                >
-                  <SearchIcon />
-                </IconButton>
+            <Box sx={isDesktop ? classes.visible : classes.hidden}>
+              <form onSubmit={submitHandler}>
+                <Box sx={classes.searchForm}>
+                  <InputBase
+                    name="query"
+                    sx={classes.searchInput}
+                    placeholder="Otsi tooteid"
+                    onChange={queryChangeHandler}
+                  />
+                  <IconButton
+                    type="submit"
+                    sx={classes.searchButton}
+                    aria-label="search"
+                  >
+                    <SearchIcon />
+                  </IconButton>
+                </Box>
               </form>
-            </div>
-            <div>
+            </Box>
+            <Box>
               <Switch
                 checked={darkMode}
                 onChange={darkModeChangeHandler}
@@ -234,7 +248,7 @@ export default function Layout({ title, description, children }) {
                     aria-controls="simple-menu"
                     aria-haspopup="true"
                     onClick={loginClickHandler}
-                    className={classes.navbarButton}
+                    sx={classes.navbarButton}
                   >
                     {userInfo.name}
                   </Button>
@@ -276,14 +290,16 @@ export default function Layout({ title, description, children }) {
                   </Link>
                 </NextLink>
               )}
-            </div>
+            </Box>
           </Toolbar>
         </AppBar>
-        <Container className={classes.main}>{children}</Container>
-        <footer className={classes.footer}>
+        <Container component="main" sx={classes.main}>
+          {children}
+        </Container>
+        <Box component="footer" sx={classes.footer}>
           <Typography>Ubala Röstikoda - kõik õigused kaitstud</Typography>
-        </footer>
+        </Box>
       </ThemeProvider>
-    </div>
+    </>
   );
 }
